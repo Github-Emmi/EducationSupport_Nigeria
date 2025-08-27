@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSupport Nigeria - AI-Powered Learning Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #00694e;
+            --secondary-color: #f7a800;
+            --accent-color: #008751;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-medium: rgba(0, 0, 0, 0.2);
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --info: #2196f3;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--bg-white);
+            box-shadow: 0 2px 10px var(--shadow-light);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--bg-white);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px var(--shadow-light);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--shadow-medium);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--bg-light);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+        }
+
+        /* Flashcard Styles */
+        .flashcard-container {
+            perspective: 1000px;
+            height: 300px;
+            margin: 1rem 0;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 8px var(--shadow-light);
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        /* To-Do List Styles */
+        .todo-container {
+            background: var(--bg-white);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px var(--shadow-light);
+        }
+
+        .todo-input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .todo-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid var(--bg-light);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .todo-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px var(--shadow-medium);
+        }
+
+        .todo-list {
+            list-style: none;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: var(--bg-light);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .todo-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px var(--shadow-light);
+        }
+
+        .todo-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 1rem;
+            cursor: pointer;
+        }
+
+        .todo-text {
+            flex: 1;
+            color: var(--text-primary);
+        }
+
+        .todo-priority {
+            padding: 0.3rem 0.6rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-left: 0.5rem;
+        }
+
+        .priority-high {
+            background: var(--danger);
+            color: white;
+        }
+
+        .priority-medium {
+            background: var(--warning);
+            color: white;
+        }
+
+        .priority-low {
+            background: var(--info);
+            color: white;
+        }
+
+        /* Story Submission Form */
+        .story-form {
+            background: var(--bg-white);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px var(--shadow-light);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid var(--bg-light);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* Sentiment Analysis Result */
+        .sentiment-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .sentiment-positive {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: var(--text-primary);
+        }
+
+        .sentiment-negative {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: var(--text-primary);
+        }
+
+        .sentiment-neutral {
+            background: linear-gradient(135deg, #a8caba 0%, #5d4157 100%);
+            color: white;
+        }
+
+        /* Quiz Section */
+        .quiz-container {
+            background: var(--bg-white);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px var(--shadow-light);
+        }
+
+        .quiz-question {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .quiz-option {
+            padding: 1rem;
+            background: var(--bg-light);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            transform: translateX(5px);
+            border-color: var(--primary-color);
+            background: white;
+        }
+
+        .quiz-option.selected {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.02);
+        }
+
+        .quiz-option.correct {
+            background: var(--success);
+            color: white;
+            animation: correct 0.5s ease-out;
+        }
+
+        @keyframes correct {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .quiz-option.incorrect {
+            background: var(--danger);
+            color: white;
+            animation: shake 0.5s ease-out;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        /* Q&A Chat Interface */
+        .qa-container {
+            background: var(--bg-white);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px var(--shadow-light);
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .qa-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .qa-message {
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .qa-message.user {
+            text-align: right;
+        }
+
+        .qa-message-bubble {
+            display: inline-block;
+            padding: 0.8rem 1.2rem;
+            border-radius: 15px;
+            max-width: 70%;
+        }
+
+        .qa-message.user .qa-message-bubble {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+        }
+
+        .qa-message.ai .qa-message-bubble {
+            background: white;
+            border: 2px solid var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        .qa-input-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--bg-light);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .qa-message-bubble {
+                max-width: 90%;
+            }
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: var(--bg-light);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.5s ease;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                opacity: 0.8;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0.8;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">EduSupport Nigeria 🎓</div>
+            <ul class="nav-links">
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#stories">Stories</a></li>
+                <li><a href="#flashcards">Flashcards</a></li>
+                <li><a href="#quiz">Quiz</a></li>
+                <li><a href="#tasks">Tasks</a></li>
+                <li><a href="#qa">Q&A</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Dashboard Overview -->
+        <section id="dashboard">
+            <div class="dashboard-grid">
+                <!-- Study Progress Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Study Progress</h2>
+                        <span class="card-icon">📊</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 65%;"></div>
+                    </div>
+                    <p>You've completed 65% of your learning goals this week!</p>
+                </div>
+
+                <!-- Quick Stats Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Quick Stats</h2>
+                        <span class="card-icon">📈</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <h3 style="color: var(--primary-color);">42</h3>
+                            <p>Flashcards Reviewed</p>
+                        </div>
+                        <div>
+                            <h3 style="color: var(--secondary-color);">8</h3>
+                            <p>Quizzes Completed</p>
+                        </div>
+                        <div>
+                            <h3 style="color: var(--success);">15</h3>
+                            <p>Tasks Done</p>
+                        </div>
+                        <div>
+                            <h3 style="color: var(--info);">23</h3>
+                            <p>Questions Asked</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Story Submission Section -->
+        <section id="stories" style="margin-top: 3rem;">
+            <div class="story-form">
+                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">Share Your Story</h2>
+                <div class="form-group">
+                    <label class="form-label" for="story-title">Title</label>
+                    <input type="text" id="story-title" class="form-input" placeholder="Enter your story title">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="story-content">Your Story</label>
+                    <textarea id="story-content" class="form-textarea" placeholder="Share your educational journey, challenges, or success stories..."></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="analyzeSentiment()">Submit & Analyze Sentiment</button>
+                <div id="sentiment-result"></div>
+            </div>
+        </section>
+
+        <!-- Flashcards Section -->
+        <section id="flashcards" style="margin-top: 3rem;">
+            <div class="card">
+                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">Interactive Flashcards</h2>
+                <div class="flashcard-container">
+                    <div class="flashcard" onclick="flipCard(this)">
+                        <div class="flashcard-face flashcard-front">
+                            <div>
+                                <h3>Question:</h3>
+                                <p>What is the structure of the Nigerian education system?</p>
+                            </div>
+                        </div>
+                        <div class="flashcard-face flashcard-back">
+                            <div>
+                                <h3>Answer:</h3>
+                                <p>The Nigerian education system follows a 6-3-3-4 structure: 6 years of primary, 3 years of junior secondary, 3 years of senior secondary, and 4 years of tertiary education.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 1rem;">
+                    <button class="btn btn-primary" onclick="nextFlashcard()">Next Card →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz" style="margin-top: 3rem;">
+            <div class="quiz-container">
+                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">AI-Generated Quiz</h2>
+                <div class="form-group">
+                    <input type="text" id="quiz-topic" class="form-input" placeholder="Enter a topic for quiz generation">
+                    <button class="btn btn-primary" style="margin-top: 1rem;" onclick="generateQuiz()">Generate Quiz</button>
+                </div>
+                <div id="quiz-content" style="margin-top: 2rem;"></div>
+            </div>
+        </section>
+
+        <!-- To-Do Tasks Section -->
+        <section id="tasks" style="margin-top: 3rem;">
+            <div class="todo-container">
+                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">Study Tasks</h2>
+                <div class="todo-input-group">
+                    <input type="text" id="todo-input" class="todo-input" placeholder="Add a new study task...">
+                    <select id="todo-priority" class="todo-input" style="width: 150px;">
+                        <option value="low">Low Priority</option>
+                        <option value="medium" selected>Medium Priority</option>
+                        <option value="high">High Priority</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="addTodo()">Add Task</button>
+                </div>
+                <ul class="todo-list" id="todo-list"></ul>
+            </div>
+        </section>
+
+        <!-- Q&A Section -->
+        <section id="qa" style="margin-top: 3rem; margin-bottom: 3rem;">
+            <div class="qa-container">
+                <h2 style="color: var(--primary-color); margin-bottom: 1.5rem;">Ask Me Anything</h2>
+                <div class="qa-messages" id="qa-messages"></div>
+                <div class="qa-input-group">
+                    <input type="text" id="qa-input" class="todo-input" placeholder="Type your question here...">
+                    <button class="btn btn-primary" onclick="sendQuestion()">Send</button>
+                </div>
+            </div>
+        </section>
+    </div>      
